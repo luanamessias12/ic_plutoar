@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Pluto AR</title>
+
+  <!-- A-Frame e MindAR via CDN -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    /* Reset e base */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'DM Sans', sans-serif; }
+    body { background-color: #fff; color: #333; }
+    a { text-decoration: none; }
+
+    /* Layout geral */
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    nav { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2rem; }
+    nav a { margin-left: 1rem; font-weight: 500; color: #4b5563; transition: color 0.3s; }
+    nav a:hover { color: #d946ef; }
+
+    .logo { width: 56px; height: 56px; border-radius: 50%; }
+
+    /* Botão principal */
+    .btn-primary { background-color: #d946ef; color: white; padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 500; transition: background-color 0.3s; display: inline-block; }
+    .btn-primary:hover { background-color: #a21caf; }
+
+    /* Hero Section */
+    section { min-height: 100vh; display: flex; flex-direction: column; gap: 2rem; }
+    .hero { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2rem; }
+    .hero > div, .hero > img { flex: 1 1 400px; } /* garante lado a lado e responsividade */
+    .hero h1 { font-size: 4rem; font-weight: 900; color: #1f2937; }
+    .hero h1 span { color: #d946ef; }
+    .hero p { font-size: 1.25rem; font-weight: 600; color: #4b5563; margin-top: 1rem; }
+    .hero img { max-width: 100%; height: auto; }
+
+    .text-center { text-align: center; }
+
+    /* Responsividade */
+    @media(max-width: 768px) {
+      .hero { flex-direction: column; text-align: center; }
+      nav { justify-content: center; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <section id="home">
+      <!-- Navbar -->
+      <nav>
+        <a href="/"><img class="logo" src="logo.jpeg" alt="Logomarca Pluto AR"></a>
+        <div>
+          <a href="#home">Início</a>
+          <a href="educador.html">Educador</a>
+          <a href="contato.html">Contato</a>
+          <a href="comecar.html" class="btn-primary">Começar</a>
+        </div>
+      </nav>
+
+      <!-- Hero Section -->
+      <div class="hero">
+        <div>
+          <h1>Explore o Universo com a <span>Pluto AR</span></h1>
+          <p>Nunca foi tão fácil conhecer o universo.<br>Conheça mais através da Realidade Aumentada</p>
+          <a href="comecar.html" class="btn-primary">Comece Agora</a>
+        </div>
+        <img src="Solarsystem.svg" alt="Ilustração do sistema solar tela inicial">
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
+
