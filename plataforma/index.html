@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Pluto AR - Plataforma</title>
+  <style>
+    body { margin: 0; font-family: 'DM Sans', sans-serif; display: flex; min-height: 100vh; }
+    /* Sidebar */
+    aside { background-color: #6b21a8; color: white; width: 250px; display: flex; flex-direction: column; padding: 1.5rem; }
+    aside h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 2rem; }
+    aside nav a { color: white; padding: 0.5rem; border-radius: 0.25rem; display: block; margin-bottom: 0.5rem; text-decoration: none; }
+    aside nav a:hover { background-color: #7e22ce; }
+    aside .logout { margin-top: auto; background-color: white; color: #6b21a8; text-align: center; padding: 0.5rem; border-radius: 0.25rem; text-decoration: none; display: block; }
+    aside .logout:hover { background-color: #e5e7eb; }
+    /* Conteúdo */
+    main { flex: 1; background-color: #f3f4f6; padding: 2rem; }
+    .card { background-color: white; border-radius: 0.5rem; padding: 1.5rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: box-shadow 0.3s; text-decoration: none; color: inherit; display: block; margin-bottom: 1.5rem; }
+    .card:hover { box-shadow: 0 8px 12px rgba(0,0,0,0.2); }
+    .card h2, .card h3 { color: #7c3aed; margin-bottom: 0.5rem; }
+    .card p { color: #4b5563; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media(min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <aside>
+    <h1>Pluto AR</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="material.html">Material</a>
+      <a href="regras.html">Regras do Game</a>
+    </nav>
+    <a href="../index.html" class="logout">Sair</a>
+  </aside>
+  <main>
+    <!-- Retângulo grande -->
+    <a href="sistema-solar.html" class="card">
+      <h2>Sistema Solar em 3D</h2>
+      <p>Explore o sistema solar de forma interativa.</p>
+    </a>
+
+    <!-- Dois retângulos menores -->
+    <div class="grid">
+      <a href="planetas.html" class="card">
+        <h3>Planetas</h3>
+        <p>Conheça os planetas do nosso sistema solar.</p>
+      </a>
+      <a href="gameplay.html" class="card">
+        <h3>Gameplay</h3>
+        <p>Veja como jogar e se divertir aprendendo.</p>
+      </a>
+    </div>
+  </main>
+</body>
+</html>
