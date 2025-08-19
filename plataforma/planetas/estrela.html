@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estrelas</title>
+
+  <!-- Fontes e ícones -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body.pagina-estrelas {
+      background-color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+
+    .nav-completo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #A305A6;
+      border-bottom: 2px solid #660273;
+    }
+
+    .menu {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    .menu li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .menu li a:hover {
+      color: #2D0140;
+    }
+
+    .btn-sair {
+      color: #ffffff;
+      font-size: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .btn-sair:hover {
+      color: #660273;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .card {
+      height: 220px;
+      border-radius: 15px;
+      background-size: cover;
+      background-position: center;
+      border: 2px solid #660273;
+      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(255, 0, 255, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .nav-completo {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .menu {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="pagina-estrelas">
+  <main class="content-estrelas">
+    <nav class="nav-completo">
+      <ul class="menu">
+        <li><a href="/plataforma/planetas/index.html">Planetas</a></li>
+        <li><a href="/plataforma/planetas/estrela.html">Estrelas</a></li>
+        <li><a href="/plataforma/planetas/satelites.html">Satélites</a></li>
+      </ul>
+      <a href="/plataforma/index.html" class="btn-sair" aria-label="Sair"><i class="fas fa-times"></i></a>
+    </nav>
+
+    <div class="cards-grid">
+      <a href="/plataforma/flashcards/estrelas/solcard.html" class="card"
+        style="background-image: url('/img/sol-img.jpg');">SOL</a>
+    </div>
+  </main>
+</body>
+
+</html>
