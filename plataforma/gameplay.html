@@ -1,36 +1,176 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Pluto AR - Gameplay</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Pluto AR - Teste Gameplay</title>
   <style>
-    body { margin: 0; font-family: 'DM Sans', sans-serif; display: flex; min-height: 100vh; }
-    /* Sidebar */
-    aside { background-color: #6b21a8; color: white; width: 250px; display: flex; flex-direction: column; padding: 1.5rem; }
-    aside h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 2rem; }
-    aside nav a { color: white; padding: 0.5rem; border-radius: 0.25rem; display: block; margin-bottom: 0.5rem; text-decoration: none; }
-    aside nav a:hover { background-color: #7e22ce; }
-    aside .logout { margin-top: auto; background-color: white; color: #6b21a8; text-align: center; padding: 0.5rem; border-radius: 0.25rem; text-decoration: none; display: block; }
-    aside .logout:hover { background-color: #e5e7eb; }
-    /* Conteúdo */
-    main { flex: 1; background-color: #f3f4f6; padding: 2rem; }
-    h1 { color: #7c3aed; font-size: 2rem; margin-bottom: 1rem; }
-    p { color: #4b5563; }
+    html, body {
+      margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; font-family: Arial, sans-serif;
+    }
+    #gameCanvas { display:block; width:100vw; height:100vh; }
+    #startButton{
+      position:fixed; top:20px; left:50%; transform:translateX(-50%);
+      padding:12px 26px; font-size:18px; font-weight:700; color:#fff;
+      background:#660273; border:none; border-radius:10px; cursor:pointer; z-index:9999;
+    }
+    #startButton:hover{ background:#A305A6; }
+    #hud{
+      position:fixed; top:16px; left:20px; color:#fff; font-size:20px; z-index:9998; text-shadow:0 0 6px rgba(0,0,0,.6);
+    }
   </style>
 </head>
 <body>
-  <aside>
-    <h1>Pluto AR</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="material.html">Material</a>
-      <a href="regras.html">Regras do Game</a>
-    </nav>
-    <a href="../index.html" class="logout">Sair</a>
-  </aside>
-  <main>
-    <h1>Gameplay</h1>
-    <p>Aqui você poderá adicionar o conteúdo de gameplay interativo do jogo. Por enquanto, esta página está pronta para receber vídeos, imagens ou elementos 3D.</p>
-  </main>
+  <button id="startButton">Start</button>
+  <div id="hud">Pontos: <span id="score">0</span></div>
+  <canvas id="gameCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('startButton');
+    const scoreEl = document.getElementById('score');
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Fundo estrelado (sua imagem) + fallback de estrelas
+    const bg = new Image();
+    bg.src = "https://cdn.glitch.global/4cfbcd0a-1382-44f1-b55c-1f16f20ea425%2FSolarsystemscope_texture_8k_stars_milky_way.jpg?v=1624110041528";
+    let bgLoaded = false;
+    bg.onload = () => { bgLoaded = true; };
+
+    const stars = Array.from({length: 150}, () => ({
+      x: Math.random()*window.innerWidth,
+      y: Math.random()*window.innerHeight,
+      r: Math.random()*1.8 + 0.2,
+      s: Math.random()*0.8 + 0.2
+    }));
+
+    const player = { x: 120, y: canvas.height/2, w: 48, h: 48, vy: 0 };
+    const gravity = 0.6;
+    const jump = -11;
+    let pipes = [];
+    let frame = 0;
+    let score = 0;
+    let running = false;
+
+    function resetGame(){
+      player.y = canvas.height/2; player.vy = 0;
+      pipes = []; frame = 0; score = 0; scoreEl.textContent = '0';
+    }
+
+    function spawnPipes(){
+      const gap = Math.max(140, Math.min(220, 160 + (Math.random()*120 - 60)));
+      const topH = Math.random()*(canvas.height - gap - 200) + 60;
+      const bottomY = topH + gap;
+      const pipeW = 70;
+      pipes.push({
+        x: canvas.width,
+        top: { y: 0, h: topH, w: pipeW },
+        bottom: { y: bottomY, h: canvas.height - bottomY, w: pipeW },
+        passed: false
+      });
+    }
+
+    function drawBackground(){
+      if(bgLoaded){
+        ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = '#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#fff';
+        stars.forEach(st => {
+          ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI*2); ctx.fill();
+          st.x -= st.s;
+          if(st.x < -2){ st.x = canvas.width + 2; st.y = Math.random()*canvas.height; }
+        });
+      }
+    }
+
+    function drawPlayer(){
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(player.x, player.y, player.w, player.h);
+    }
+
+    function drawPipes(){
+      ctx.fillStyle = '#6b7280';
+      pipes.forEach(p => {
+        ctx.fillRect(p.x, p.top.y, p.top.w, p.top.h);
+        ctx.fillRect(p.x, p.bottom.y, p.bottom.w, p.bottom.h);
+      });
+    }
+
+    function update(){
+      player.vy += gravity;
+      player.y += player.vy;
+      if(player.y < 0){ player.y = 0; player.vy = 0; }
+      if(player.y + player.h > canvas.height){
+        player.y = canvas.height - player.h;
+        endGame();
+      }
+
+      if(frame % 90 === 0) spawnPipes();
+      pipes.forEach(p => { p.x -= 5; });
+      pipes = pipes.filter(p => p.x + p.top.w > -5);
+
+      pipes.forEach(p => {
+        const collideTop = player.x < p.x + p.top.w && player.x + player.w > p.x && player.y < p.top.y + p.top.h && player.y + player.h > p.top.y;
+        const collideBottom = player.x < p.x + p.bottom.w && player.x + player.w > p.x && player.y < p.bottom.y + p.bottom.h && player.y + player.h > p.bottom.y;
+        if(collideTop || collideBottom) endGame();
+        if(!p.passed && p.x + p.top.w < player.x){
+          p.passed = true;
+          score++;
+          scoreEl.textContent = score;
+        }
+      });
+
+      frame++;
+    }
+
+    function endGame(){
+      running = false;
+      startBtn.textContent = 'Restart';
+      startBtn.style.display = 'block';
+    }
+
+    function loop(){
+      if(!running) return;
+      drawBackground();
+      update();
+      drawPipes();
+      drawPlayer();
+      requestAnimationFrame(loop);
+    }
+
+    function doJump(){
+      if(!running) return;
+      player.vy = jump;
+    }
+
+    // Controles Desktop
+    document.addEventListener('keydown', e => { if(e.code === 'Space') { e.preventDefault(); doJump(); } });
+    canvas.addEventListener('pointerdown', doJump);
+
+    // Controles Mobile
+    canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      doJump();
+    }, { passive: false });
+
+    // Start / Restart
+    startBtn.addEventListener('click', () => {
+      resetGame();
+      running = true;
+      startBtn.style.display = 'none';
+      loop();
+    });
+
+    console.log('Jogo carregado. Teste no mobile tocando na tela para pular.');
+  </script>
 </body>
 </html>
+
