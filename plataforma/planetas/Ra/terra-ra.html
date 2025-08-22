@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <title>Solar 3D Scene </title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+  <style>
+    /* Botões no canto superior esquerdo */
+    #buttonContainer {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      gap: 15px;
+      z-index: 10;
+    }
+
+    .scene-button {
+      padding: 10px 20px;
+      background-color: #250036;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .scene-button:hover {
+      background-color: #660273;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Botões: Órbitas e Voltar -->
+  <div id="buttonContainer">
+    <button id="toggleOrbitsButton" class="scene-button">Ocultar Órbitas</button>
+    <a href="/plataforma/planetas/flashcards/terracard.html" class="scene-button">Voltar</a>
+  </div>
+
+  <a-scene>
+
+    <!-- Poeira espacial -->
+    <a-entity position="0 0 0" particle-system="preset: dust; particleCount: 10000"></a-entity>
+
+    <!-- Agrupamento principal (com escala reduzida) -->
+    <a-entity scale="0.15 0.15 0.15">
+
+
+      <!-- Órbitas dos planetas -->
+      <a-entity id="orbits">
+        <a-torus class="orbit" rotation="-90 0 0" position="0 12 -10" radius="8.25" radius-tubular="0.005"
+          material="color: white; opacity: 0.7;"></a-torus>
+
+      </a-entity>
+
+      <!-- Terra + Lua -->
+      <a-entity rotation="0 0 0" position="0 12 -10"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000;">
+        <a-entity position="8.25 0 0">
+          <a-sphere radius="1.25"
+            material="src: https://cdn.glitch.global/d5328a51-0314-495a-a386-b7960ac25453/eath.jpg?v=1745687372490"
+            shadow animation="property: rotation; to: 0 360 0; loop: true; dur: 5000;"></a-sphere>
+          <a-text value="Terra" position="0 1.5 0" align="center" color="white" scale="2 2 2"></a-text>
+
+          <!-- Lua -->
+          <a-entity rotation="5 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 3000;">
+            <a-sphere position="2 0 0" radius="0.3"
+              material="src: https://cdn.glitch.global/d5328a51-0314-495a-a386-b7960ac25453/moon.jpg?v=1745684355500"
+              shadow></a-sphere>
+          </a-entity>
+        </a-entity>
+      </a-entity>
+
+    <!-- Fundo de estrelas -->
+    <a-sky material="src: https://cdn.glitch.global/4cfbcd0a-1382-44f1-b55c-1f16f20ea425%2FSolarsystemscope_texture_8k_stars_milky_way.jpg?v=1624110041528"></a-sky>
+
+  </a-scene>
+
+  <!-- Script de controle das órbitas -->
+  <script>
+    const toggleButton = document.getElementById('toggleOrbitsButton');
+    const orbits = document.querySelectorAll('.orbit');
+    let orbitsVisible = true;
+
+    function fadeOrbits(toOpacity, duration = 500) {
+      orbits.forEach(orbit => {
+        let material = orbit.getObject3D('mesh').material;
+        if (!material) return;
+
+        let start = material.opacity;
+        let startTime = null;
+
+        function animate(time) {
+          if (!startTime) startTime = time;
+          let elapsed = time - startTime;
+          let progress = Math.min(elapsed / duration, 1);
+          material.opacity = start + (toOpacity - start) * progress;
+          material.transparent = true;
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        }
+
+        requestAnimationFrame(animate);
+      });
+    }
+
+    toggleButton.addEventListener('click', () => {
+      orbitsVisible = !orbitsVisible;
+      if (orbitsVisible) {
+        fadeOrbits(0.7);
+        toggleButton.textContent = 'Ocultar Órbitas';
+      } else {
+        fadeOrbits(0);
+        toggleButton.textContent = 'Mostrar Órbitas';
+      }
+    });
+  </script>
+
+</body>
+
+</html>
