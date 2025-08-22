@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SATURNO</title>
+
+  <!-- Fontes e ícones -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+  <!-- CSS interno -->
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff;
+      color: #2D0140;
+    }
+
+    /* Header */
+    .top-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      background-color: #A305A6;
+      color: white;
+      position: relative;
+    }
+
+    .top-section h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #660273;
+    }
+
+    .circle-image {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      margin: 1rem 0;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    /* Conteúdo */
+    .bottom-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      text-align: center;
+      line-height: 1.6;
+      font-size: 1.1rem;
+    }
+
+    /* Botões */
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .button-group a {
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      background-color: #A305A6;
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-group a:hover {
+      background-color: #660273;
+    }
+
+    @media (max-width: 768px) {
+      .circle-image {
+        width: 140px;
+        height: 140px;
+      }
+
+      .button-group a {
+        padding: 0.6rem 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-section">
+    <a href="/plataforma/planetas/index.html" class="close-btn" aria-label="Voltar">
+      <i class="fas fa-times"></i>
+    </a>
+    <h1>Planetas</h1>
+    <img src="/img/saturno-img.jpg" alt="SATURNO" class="circle-image" />
+    <div class="subtitle">SATURNO</div>
+  </div>
+
+  <div class="bottom-section">
+    <p>Explore mais conteúdos sobre astronomia: Lorem ipsum dolor sit amet consectetur, adipisicing elit. Est facere cumque minima atque facilis vero! Facilis commodi sunt quibusdam nulla, cum sit nobis labore dignissimos quod excepturi, error, facere ea.</p>
+    <div class="button-group">
+      <a href="/plataforma/sistema-solar.html">Sistema Solar</a>
+      <a href="/plataforma/planetas/estrelas/sol.html">3D</a>
+      <a href="/plataforma/gameplay.html">GamePlay</a>
+    </div>
+  </div>
+</body>
+</html>

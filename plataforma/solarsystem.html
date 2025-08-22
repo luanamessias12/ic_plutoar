@@ -39,8 +39,7 @@
   <!-- Botões: Órbitas e Voltar -->
   <div id="buttonContainer">
     <button id="toggleOrbitsButton" class="scene-button">Ocultar Órbitas</button>
-    <!-- Botão para voltar à página anterior -->
-    <button id="goBackButton" class="scene-button">Voltar para Plataforma</button>
+    <a href="/plataforma/index.html" class="scene-button">Voltar para Plataforma</a>
   </div>
 
   <a-scene>
@@ -185,7 +184,7 @@
 
   </a-scene>
 
-  <!-- Script de controle das órbitas e botão Voltar -->
+  <!-- Script de controle das órbitas -->
   <script>
     const toggleButton = document.getElementById('toggleOrbitsButton');
     const orbits = document.querySelectorAll('.orbit');
@@ -225,18 +224,13 @@
         toggleButton.textContent = 'Mostrar Órbitas';
       }
     });
-
-    // Botão "Voltar para Plataforma" -> Voltar para a página anterior
-    const backBtn = document.getElementById('goBackButton');
-    backBtn.addEventListener('click', () => {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = '/plataforma/index.html';
-      }
-    });
   </script>
 
 </body>
 
 </html>
+
+
+
+
+
