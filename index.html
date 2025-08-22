@@ -28,18 +28,46 @@
 
     /* Hero Section */
     section { min-height: 100vh; display: flex; flex-direction: column; gap: 2rem; }
-    .hero { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2rem; }
-    .hero > div, .hero > img { flex: 1 1 400px; } /* garante lado a lado e responsividade */
+
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .hero-text {
+      flex: 1 1 400px; /* ocupa espaço disponível */
+    }
+
+    .hero-image {
+      flex: 1 1 300px; /* menor que o texto */
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-image img {
+      max-width: 80%; /* reduz o tamanho da imagem */
+      height: auto;
+    }
+
     .hero h1 { font-size: 4rem; font-weight: 900; color: #1f2937; }
     .hero h1 span { color: #d946ef; }
     .hero p { font-size: 1.25rem; font-weight: 600; color: #4b5563; margin-top: 1rem; }
-    .hero img { max-width: 100%; height: auto; }
-
-    .text-center { text-align: center; }
 
     /* Responsividade */
     @media(max-width: 768px) {
-      .hero { flex-direction: column; text-align: center; }
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero-image img {
+        max-width: 60%; /* ajusta ainda mais em telas pequenas */
+        margin-top: 1rem;
+      }
+
       nav { justify-content: center; gap: 1rem; }
     }
   </style>
@@ -61,12 +89,15 @@
 
       <!-- Hero Section -->
       <div class="hero">
-        <div>
+        <div class="hero-text">
           <h1>Explore o Universo com a <span>Pluto AR</span></h1>
           <p>Nunca foi tão fácil conhecer o universo.<br>Conheça mais através da Realidade Aumentada</p>
+        </br>
           <a href="comecar.html" class="btn-primary">Comece Agora</a>
         </div>
-        <img src="Solarsystem.svg" alt="Ilustração do sistema solar tela inicial">
+        <div class="hero-image">
+          <img src="Solarsystem.svg" alt="Ilustração do sistema solar tela inicial">
+        </div>
       </div>
     </section>
   </main>
