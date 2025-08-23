@@ -1,176 +1,196 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Pluto AR - Teste Gameplay</title>
-  <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; font-family: Arial, sans-serif;
-    }
-    #gameCanvas { display:block; width:100vw; height:100vh; }
-    #startButton{
-      position:fixed; top:20px; left:50%; transform:translateX(-50%);
-      padding:12px 26px; font-size:18px; font-weight:700; color:#fff;
-      background:#660273; border:none; border-radius:10px; cursor:pointer; z-index:9999;
-    }
-    #startButton:hover{ background:#A305A6; }
-    #hud{
-      position:fixed; top:16px; left:20px; color:#fff; font-size:20px; z-index:9998; text-shadow:0 0 6px rgba(0,0,0,.6);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pluto AR - Gameplay com Formas</title>
+<style>
+  html, body { margin:0; padding:0; overflow:hidden; background:#000; font-family: Arial, sans-serif; }
+  canvas { display:block; }
+  #startButton {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    padding: 12px 26px; font-size: 18px; font-weight: 700; color: #fff;
+    background: #660273; border: none; border-radius: 10px; cursor: pointer; z-index: 9999;
+  }
+  #startButton:hover { background: #A305A6; }
+  #hud {
+    position: fixed; top: 16px; left: 20px; color: #fff; font-size: 20px;
+    z-index: 9998; text-shadow: 0 0 6px rgba(0,0,0,.6);
+  }
+</style>
 </head>
 <body>
-  <button id="startButton">Start</button>
-  <div id="hud">Pontos: <span id="score">0</span></div>
-  <canvas id="gameCanvas"></canvas>
 
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const startBtn = document.getElementById('startButton');
-    const scoreEl = document.getElementById('score');
+<button id="startButton">Start</button>
+<div id="hud">Pontos: <span id="score">0</span></div>
+<canvas id="gameCanvas"></canvas>
 
-    function resizeCanvas(){
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const startBtn = document.getElementById('startButton');
+const scoreEl = document.getElementById('score');
+
+let running = false;
+let score = 0;
+let frame = 0;
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// ------------------- Player -------------------
+const player = { x:100, y:canvas.height/2, w:50, h:50, speed:7 };
+
+// ------------------- Objetos -------------------
+let asteroids = [];
+let planets = [];
+
+// ------------------- Funções -------------------
+function resetGame(){
+  player.y = canvas.height/2;
+  asteroids = [];
+  planets = [];
+  frame = 0;
+  score = 0;
+  scoreEl.textContent = score;
+}
+
+function spawnAsteroid(){
+  const type = Math.floor(Math.random()*3); // tamanho pequeno, médio, grande
+  const size = 30 + type*20;
+  asteroids.push({
+    x: canvas.width,
+    y: Math.random()*(canvas.height-size),
+    w: size, h: size,
+    speed: 5 + Math.random()*3,
+    type: type
+  });
+}
+
+function spawnPlanet(){
+  const size = 40;
+  const colors = ["#a0a0a0","#ffcc00","#00ccff","#ff6666","#ff9900","#ccff00","#00ffff"];
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  planets.push({
+    x: canvas.width,
+    y: Math.random()*(canvas.height-size),
+    w: size, h: size,
+    speed: 4,
+    color: color
+  });
+}
+
+// ------------------- Desenho -------------------
+function drawBackground(){
+  ctx.fillStyle="#000";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+
+function drawPlayer(){
+  ctx.fillStyle="#fff";
+  ctx.fillRect(player.x,player.y,player.w,player.h);
+}
+
+function drawAsteroids(){
+  asteroids.forEach(a=>{
+    ctx.fillStyle="#888";
+    ctx.beginPath();
+    ctx.arc(a.x + a.w/2, a.y + a.h/2, a.w/2, 0, Math.PI*2);
+    ctx.fill();
+  });
+}
+
+function drawPlanets(){
+  planets.forEach(p=>{
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x + p.w/2, p.y + p.h/2, p.w/2, 0, Math.PI*2);
+    ctx.fill();
+  });
+}
+
+// ------------------- Atualizar -------------------
+function update(){
+  frame++;
+  if(frame % 90 === 0) spawnAsteroid();
+  if(frame % 150 === 0) spawnPlanet();
+  // Aumenta velocidade após 45s (~2700 frames a 60fps)
+  if(frame % 2700 === 0 && frame!==0){
+    asteroids.forEach(a=>a.speed+=1);
+    planets.forEach(p=>p.speed+=0.5);
+  }
+
+  asteroids.forEach(a=>a.x -= a.speed);
+  planets.forEach(p=>p.x -= p.speed);
+
+  asteroids = asteroids.filter(a=>a.x + a.w > 0);
+  planets = planets.filter(p=>p.x + p.w > 0);
+
+  // Colisão asteroides
+  asteroids.forEach(a=>{
+    if(player.x < a.x+a.w && player.x+player.w>a.x &&
+       player.y < a.y+a.h && player.y+player.h>a.y){
+      endGame();
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+  });
 
-    // Fundo estrelado (sua imagem) + fallback de estrelas
-    const bg = new Image();
-    bg.src = "https://cdn.glitch.global/4cfbcd0a-1382-44f1-b55c-1f16f20ea425%2FSolarsystemscope_texture_8k_stars_milky_way.jpg?v=1624110041528";
-    let bgLoaded = false;
-    bg.onload = () => { bgLoaded = true; };
-
-    const stars = Array.from({length: 150}, () => ({
-      x: Math.random()*window.innerWidth,
-      y: Math.random()*window.innerHeight,
-      r: Math.random()*1.8 + 0.2,
-      s: Math.random()*0.8 + 0.2
-    }));
-
-    const player = { x: 120, y: canvas.height/2, w: 48, h: 48, vy: 0 };
-    const gravity = 0.6;
-    const jump = -11;
-    let pipes = [];
-    let frame = 0;
-    let score = 0;
-    let running = false;
-
-    function resetGame(){
-      player.y = canvas.height/2; player.vy = 0;
-      pipes = []; frame = 0; score = 0; scoreEl.textContent = '0';
+  // Coletar planetas
+  planets.forEach((p,i)=>{
+    if(player.x < p.x+p.w && player.x+player.w>p.x &&
+       player.y < p.y+p.h && player.y+player.h>p.y){
+      score++;
+      scoreEl.textContent=score;
+      planets.splice(i,1);
     }
+  });
+}
 
-    function spawnPipes(){
-      const gap = Math.max(140, Math.min(220, 160 + (Math.random()*120 - 60)));
-      const topH = Math.random()*(canvas.height - gap - 200) + 60;
-      const bottomY = topH + gap;
-      const pipeW = 70;
-      pipes.push({
-        x: canvas.width,
-        top: { y: 0, h: topH, w: pipeW },
-        bottom: { y: bottomY, h: canvas.height - bottomY, w: pipeW },
-        passed: false
-      });
-    }
+// ------------------- Loop -------------------
+function loop(){
+  if(!running) return;
+  drawBackground();
+  update();
+  drawAsteroids();
+  drawPlanets();
+  drawPlayer();
+  requestAnimationFrame(loop);
+}
 
-    function drawBackground(){
-      if(bgLoaded){
-        ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-      } else {
-        ctx.fillStyle = '#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = '#fff';
-        stars.forEach(st => {
-          ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI*2); ctx.fill();
-          st.x -= st.s;
-          if(st.x < -2){ st.x = canvas.width + 2; st.y = Math.random()*canvas.height; }
-        });
-      }
-    }
+// ------------------- Controles -------------------
+document.addEventListener('keydown', e=>{
+  if(!running) return;
+  if(e.key==='ArrowUp'||e.key==='w') player.y -= player.speed;
+  if(e.key==='ArrowDown'||e.key==='s') player.y += player.speed;
+});
 
-    function drawPlayer(){
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(player.x, player.y, player.w, player.h);
-    }
+canvas.addEventListener('mousemove', e=>{
+  if(running) player.y = e.clientY - player.h/2;
+});
 
-    function drawPipes(){
-      ctx.fillStyle = '#6b7280';
-      pipes.forEach(p => {
-        ctx.fillRect(p.x, p.top.y, p.top.w, p.top.h);
-        ctx.fillRect(p.x, p.bottom.y, p.bottom.w, p.bottom.h);
-      });
-    }
+canvas.addEventListener('touchmove', e=>{
+  if(running) player.y = e.touches[0].clientY - player.h/2;
+});
 
-    function update(){
-      player.vy += gravity;
-      player.y += player.vy;
-      if(player.y < 0){ player.y = 0; player.vy = 0; }
-      if(player.y + player.h > canvas.height){
-        player.y = canvas.height - player.h;
-        endGame();
-      }
+// ------------------- Fim do jogo -------------------
+function endGame(){
+  running=false;
+  startBtn.style.display='block';
+  startBtn.textContent='Restart';
+}
 
-      if(frame % 90 === 0) spawnPipes();
-      pipes.forEach(p => { p.x -= 5; });
-      pipes = pipes.filter(p => p.x + p.top.w > -5);
-
-      pipes.forEach(p => {
-        const collideTop = player.x < p.x + p.top.w && player.x + player.w > p.x && player.y < p.top.y + p.top.h && player.y + player.h > p.top.y;
-        const collideBottom = player.x < p.x + p.bottom.w && player.x + player.w > p.x && player.y < p.bottom.y + p.bottom.h && player.y + player.h > p.bottom.y;
-        if(collideTop || collideBottom) endGame();
-        if(!p.passed && p.x + p.top.w < player.x){
-          p.passed = true;
-          score++;
-          scoreEl.textContent = score;
-        }
-      });
-
-      frame++;
-    }
-
-    function endGame(){
-      running = false;
-      startBtn.textContent = 'Restart';
-      startBtn.style.display = 'block';
-    }
-
-    function loop(){
-      if(!running) return;
-      drawBackground();
-      update();
-      drawPipes();
-      drawPlayer();
-      requestAnimationFrame(loop);
-    }
-
-    function doJump(){
-      if(!running) return;
-      player.vy = jump;
-    }
-
-    // Controles Desktop
-    document.addEventListener('keydown', e => { if(e.code === 'Space') { e.preventDefault(); doJump(); } });
-    canvas.addEventListener('pointerdown', doJump);
-
-    // Controles Mobile
-    canvas.addEventListener('touchstart', e => {
-      e.preventDefault();
-      doJump();
-    }, { passive: false });
-
-    // Start / Restart
-    startBtn.addEventListener('click', () => {
-      resetGame();
-      running = true;
-      startBtn.style.display = 'none';
-      loop();
-    });
-
-    console.log('Jogo carregado. Teste no mobile tocando na tela para pular.');
-  </script>
+// ------------------- Start -------------------
+startBtn.addEventListener('click', ()=>{
+  resetGame();
+  running=true;
+  startBtn.style.display='none';
+  loop();
+});
+</script>
 </body>
 </html>
+
 
