@@ -7,12 +7,18 @@
 <style>
   html, body { margin:0; padding:0; overflow:hidden; background:#000; font-family: Arial, sans-serif; }
   canvas { display:block; }
-  #startButton {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    padding: 12px 26px; font-size: 18px; font-weight: 700; color: #fff;
+
+  #startButton, #backButton {
+    position: fixed; padding: 12px 26px; font-size: 18px; font-weight: 700; color: #fff;
     background: #660273; border: none; border-radius: 10px; cursor: pointer; z-index: 9999;
   }
+
+  #startButton { top: 20px; left: 50%; transform: translateX(-50%); }
   #startButton:hover { background: #A305A6; }
+
+  #backButton { bottom: 20px; left: 50%; transform: translateX(-50%); display: none; }
+  #backButton:hover { background: #A305A6; }
+
   #hud {
     position: fixed; top: 16px; left: 20px; color: #fff; font-size: 20px;
     z-index: 9998; text-shadow: 0 0 6px rgba(0,0,0,.6);
@@ -22,6 +28,7 @@
 <body>
 
 <button id="startButton">Start</button>
+<button id="backButton">Voltar para Plataforma</button>
 <div id="hud">Pontos: <span id="score">0</span></div>
 <canvas id="gameCanvas"></canvas>
 
@@ -29,6 +36,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const startBtn = document.getElementById('startButton');
+const backBtn = document.getElementById('backButton');
 const scoreEl = document.getElementById('score');
 
 let running = false;
@@ -48,11 +56,11 @@ bgImg.src = "https://cdn.glitch.global/4cfbcd0a-1382-44f1-b55c-1f16f20ea425%2FSo
 
 // ------------------- Imagem do Astronauta -------------------
 const astronautImg = new Image();
-astronautImg.src = "/astrogame.png"; // sua imagem do astronauta
+astronautImg.src = "/astrogame.png";
 
 // ------------------- Imagem do Asteroide -------------------
 const asteroidImg = new Image();
-asteroidImg.src = "/asteroidegame.png"; 
+asteroidImg.src = "/asteroidegame.png";
 
 // ------------------- Imagens dos Planetas -------------------
 const planetImages = [
@@ -65,7 +73,6 @@ const planetImages = [
   { name:"Urano",   img:new Image(), size:60, src:"/game/uranogame.png" },
   { name:"Netuno",  img:new Image(), size:60, src:"/game/netunogame.png" }
 ];
-// carregar imagens
 planetImages.forEach(p => p.img.src = p.src);
 
 // ------------------- Player -------------------
@@ -83,6 +90,7 @@ function resetGame(){
   frame = 0;
   score = 0;
   scoreEl.textContent = score;
+  backBtn.style.display = 'none'; // esconder botão de voltar no início
 }
 
 function spawnAsteroid(){
@@ -110,28 +118,19 @@ function spawnPlanet(){
 
 // ------------------- Desenho -------------------
 function drawBackground(){
-  if (bgImg.complete) {
-    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-  } else {
-    ctx.fillStyle="#000";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-  }
+  if (bgImg.complete) ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+  else { ctx.fillStyle="#000"; ctx.fillRect(0,0,canvas.width,canvas.height); }
 }
 
 function drawPlayer(){
-  if (astronautImg.complete) {
-    ctx.drawImage(astronautImg, player.x, player.y, player.w, player.h);
-  } else {
-    ctx.fillStyle="#fff";
-    ctx.fillRect(player.x,player.y,player.w,player.h);
-  }
+  if (astronautImg.complete) ctx.drawImage(astronautImg, player.x, player.y, player.w, player.h);
+  else { ctx.fillStyle="#fff"; ctx.fillRect(player.x,player.y,player.w,player.h); }
 }
 
 function drawAsteroids(){
   asteroids.forEach(a=>{
-    if (asteroidImg.complete) {
-      ctx.drawImage(asteroidImg, a.x, a.y, a.w, a.h);
-    } else {
+    if (asteroidImg.complete) ctx.drawImage(asteroidImg, a.x, a.y, a.w, a.h);
+    else {
       ctx.fillStyle="#888";
       ctx.beginPath();
       ctx.arc(a.x + a.w/2, a.y + a.h/2, a.w/2, 0, Math.PI*2);
@@ -142,9 +141,8 @@ function drawAsteroids(){
 
 function drawPlanets(){
   planets.forEach(p=>{
-    if (p.img.complete) {
-      ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
-    } else {
+    if (p.img.complete) ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
+    else {
       ctx.fillStyle="#0ff";
       ctx.beginPath();
       ctx.arc(p.x + p.w/2, p.y + p.h/2, p.w/2, 0, Math.PI*2);
@@ -218,6 +216,7 @@ function endGame(){
   running=false;
   startBtn.style.display='block';
   startBtn.textContent='Restart';
+  backBtn.style.display='block'; // mostrar botão de voltar
 }
 
 // ------------------- Start -------------------
@@ -226,6 +225,11 @@ startBtn.addEventListener('click', ()=>{
   running=true;
   startBtn.style.display='none';
   loop();
+});
+
+// ------------------- Voltar para plataforma -------------------
+backBtn.addEventListener('click', ()=>{
+  window.location.href = "/plataforma/index.html"; // substitua pela URL real
 });
 </script>
 </body>
