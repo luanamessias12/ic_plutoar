@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pluto AR - Gameplay com Formas</title>
+<title>Pluto AR - Gameplay com Astronauta</title>
 <style>
   html, body { margin:0; padding:0; overflow:hidden; background:#000; font-family: Arial, sans-serif; }
   canvas { display:block; }
@@ -42,8 +42,34 @@ function resizeCanvas(){
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
+// ------------------- Imagem de Fundo -------------------
+const bgImg = new Image();
+bgImg.src = "https://cdn.glitch.global/4cfbcd0a-1382-44f1-b55c-1f16f20ea425%2FSolarsystemscope_texture_8k_stars_milky_way.jpg?v=1624110041528"; 
+
+// ------------------- Imagem do Astronauta -------------------
+const astronautImg = new Image();
+astronautImg.src = "/astrogame.png"; // sua imagem do astronauta
+
+// ------------------- Imagem do Asteroide -------------------
+const asteroidImg = new Image();
+asteroidImg.src = "/asteroidegame.png"; 
+
+// ------------------- Imagens dos Planetas -------------------
+const planetImages = [
+  { name:"Mercúrio", img:new Image(), size:30, src:"/game/mercuriogame.png" },
+  { name:"Vênus",   img:new Image(), size:40, src:"/game/venusgame.png" },
+  { name:"Terra",   img:new Image(), size:45, src:"/game/terragame.png" },
+  { name:"Marte",   img:new Image(), size:35, src:"/game/martegame.png" },
+  { name:"Júpiter", img:new Image(), size:80, src:"/game/jupitergame.png" },
+  { name:"Saturno", img:new Image(), size:70, src:"/game/saturnogame.png" },
+  { name:"Urano",   img:new Image(), size:60, src:"/game/uranogame.png" },
+  { name:"Netuno",  img:new Image(), size:60, src:"/game/netunogame.png" }
+];
+// carregar imagens
+planetImages.forEach(p => p.img.src = p.src);
+
 // ------------------- Player -------------------
-const player = { x:100, y:canvas.height/2, w:50, h:50, speed:7 };
+const player = { x:100, y:canvas.height/2, w:60, h:60, speed:7 };
 
 // ------------------- Objetos -------------------
 let asteroids = [];
@@ -60,8 +86,8 @@ function resetGame(){
 }
 
 function spawnAsteroid(){
-  const type = Math.floor(Math.random()*3); // tamanho pequeno, médio, grande
-  const size = 30 + type*20;
+  const type = Math.floor(Math.random()*3); 
+  const size = 30 + type*20; 
   asteroids.push({
     x: canvas.width,
     y: Math.random()*(canvas.height-size),
@@ -72,44 +98,58 @@ function spawnAsteroid(){
 }
 
 function spawnPlanet(){
-  const size = 40;
-  const colors = ["#a0a0a0","#ffcc00","#00ccff","#ff6666","#ff9900","#ccff00","#00ffff"];
-  const color = colors[Math.floor(Math.random()*colors.length)];
+  const planet = planetImages[Math.floor(Math.random()*planetImages.length)];
   planets.push({
     x: canvas.width,
-    y: Math.random()*(canvas.height-size),
-    w: size, h: size,
+    y: Math.random()*(canvas.height-planet.size),
+    w: planet.size, h: planet.size,
     speed: 4,
-    color: color
+    img: planet.img
   });
 }
 
 // ------------------- Desenho -------------------
 function drawBackground(){
-  ctx.fillStyle="#000";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  if (bgImg.complete) {
+    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle="#000";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
 }
 
 function drawPlayer(){
-  ctx.fillStyle="#fff";
-  ctx.fillRect(player.x,player.y,player.w,player.h);
+  if (astronautImg.complete) {
+    ctx.drawImage(astronautImg, player.x, player.y, player.w, player.h);
+  } else {
+    ctx.fillStyle="#fff";
+    ctx.fillRect(player.x,player.y,player.w,player.h);
+  }
 }
 
 function drawAsteroids(){
   asteroids.forEach(a=>{
-    ctx.fillStyle="#888";
-    ctx.beginPath();
-    ctx.arc(a.x + a.w/2, a.y + a.h/2, a.w/2, 0, Math.PI*2);
-    ctx.fill();
+    if (asteroidImg.complete) {
+      ctx.drawImage(asteroidImg, a.x, a.y, a.w, a.h);
+    } else {
+      ctx.fillStyle="#888";
+      ctx.beginPath();
+      ctx.arc(a.x + a.w/2, a.y + a.h/2, a.w/2, 0, Math.PI*2);
+      ctx.fill();
+    }
   });
 }
 
 function drawPlanets(){
   planets.forEach(p=>{
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x + p.w/2, p.y + p.h/2, p.w/2, 0, Math.PI*2);
-    ctx.fill();
+    if (p.img.complete) {
+      ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
+    } else {
+      ctx.fillStyle="#0ff";
+      ctx.beginPath();
+      ctx.arc(p.x + p.w/2, p.y + p.h/2, p.w/2, 0, Math.PI*2);
+      ctx.fill();
+    }
   });
 }
 
@@ -118,7 +158,7 @@ function update(){
   frame++;
   if(frame % 90 === 0) spawnAsteroid();
   if(frame % 150 === 0) spawnPlanet();
-  // Aumenta velocidade após 45s (~2700 frames a 60fps)
+
   if(frame % 2700 === 0 && frame!==0){
     asteroids.forEach(a=>a.speed+=1);
     planets.forEach(p=>p.speed+=0.5);
@@ -130,7 +170,6 @@ function update(){
   asteroids = asteroids.filter(a=>a.x + a.w > 0);
   planets = planets.filter(p=>p.x + p.w > 0);
 
-  // Colisão asteroides
   asteroids.forEach(a=>{
     if(player.x < a.x+a.w && player.x+player.w>a.x &&
        player.y < a.y+a.h && player.y+player.h>a.y){
@@ -138,7 +177,6 @@ function update(){
     }
   });
 
-  // Coletar planetas
   planets.forEach((p,i)=>{
     if(player.x < p.x+p.w && player.x+player.w>p.x &&
        player.y < p.y+p.h && player.y+player.h>p.y){
@@ -192,5 +230,3 @@ startBtn.addEventListener('click', ()=>{
 </script>
 </body>
 </html>
-
-
