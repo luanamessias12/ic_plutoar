@@ -75,8 +75,11 @@ const planetImages = [
 ];
 planetImages.forEach(p => p.img.src = p.src);
 
+// ------------------- Detecta Mobile -------------------
+const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
 // ------------------- Player -------------------
-const player = { x:100, y:canvas.height/2, w:60, h:60, speed:7 };
+const player = { x:100, y:canvas.height/2, w:60, h:60, speed: isMobile ? 4 : 7 };
 
 // ------------------- Objetos -------------------
 let asteroids = [];
@@ -90,7 +93,7 @@ function resetGame(){
   frame = 0;
   score = 0;
   scoreEl.textContent = score;
-  backBtn.style.display = 'none'; // esconder botão de voltar no início
+  backBtn.style.display = 'none';
 }
 
 function spawnAsteroid(){
@@ -100,7 +103,7 @@ function spawnAsteroid(){
     x: canvas.width,
     y: Math.random()*(canvas.height-size),
     w: size, h: size,
-    speed: 5 + Math.random()*3,
+    speed: (isMobile ? 3 : 5) + Math.random()*2,
     type: type
   });
 }
@@ -111,7 +114,7 @@ function spawnPlanet(){
     x: canvas.width,
     y: Math.random()*(canvas.height-planet.size),
     w: planet.size, h: planet.size,
-    speed: 4,
+    speed: isMobile ? 2.5 : 4,
     img: planet.img
   });
 }
@@ -158,8 +161,8 @@ function update(){
   if(frame % 150 === 0) spawnPlanet();
 
   if(frame % 2700 === 0 && frame!==0){
-    asteroids.forEach(a=>a.speed+=1);
-    planets.forEach(p=>p.speed+=0.5);
+    asteroids.forEach(a=>a.speed += isMobile ? 0.5 : 1);
+    planets.forEach(p=>p.speed += isMobile ? 0.25 : 0.5);
   }
 
   asteroids.forEach(a=>a.x -= a.speed);
@@ -216,7 +219,7 @@ function endGame(){
   running=false;
   startBtn.style.display='block';
   startBtn.textContent='Restart';
-  backBtn.style.display='block'; // mostrar botão de voltar
+  backBtn.style.display='block';
 }
 
 // ------------------- Start -------------------
@@ -229,7 +232,7 @@ startBtn.addEventListener('click', ()=>{
 
 // ------------------- Voltar para plataforma -------------------
 backBtn.addEventListener('click', ()=>{
-  window.location.href = "/plataforma/index.html"; // substitua pela URL real
+  window.location.href = "/plataforma/index.html";
 });
 </script>
 </body>
