@@ -5,23 +5,68 @@
   <title>Pluto AR - Regras do Game</title>
   <style>
     body { margin: 0; font-family: 'DM Sans', sans-serif; display: flex; min-height: 100vh; }
+
     /* Sidebar */
-    aside { background-color: #6b21a8; color: white; width: 250px; display: flex; flex-direction: column; padding: 1.5rem; }
+    aside {
+      background-color: #6b21a8;
+      color: white;
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
     aside h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 2rem; }
     aside nav a { color: white; padding: 0.5rem; border-radius: 0.25rem; display: block; margin-bottom: 0.5rem; text-decoration: none; }
     aside nav a:hover { background-color: #7e22ce; }
     aside .logout { margin-top: auto; background-color: white; color: #6b21a8; text-align: center; padding: 0.5rem; border-radius: 0.25rem; text-decoration: none; display: block; }
     aside .logout:hover { background-color: #e5e7eb; }
+
     /* Conteúdo */
     main { flex: 1; background-color: #f3f4f6; padding: 2rem; }
     h1 { color: #7c3aed; font-size: 2rem; margin-bottom: 1rem; }
     p { color: #4b5563; margin-bottom: 1rem; }
     ol { list-style: decimal inside; color: #4b5563; padding-left: 1rem; }
     li { margin-bottom: 0.5rem; }
+
+    /* Botão hamburguer */
+    .menu-btn {
+      display: none;
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: #6b21a8;
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    /* Responsividade */
+    @media(max-width: 768px) {
+      body { flex-direction: column; }
+      aside {
+        position: fixed;
+        top: 0; left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        z-index: 999;
+      }
+      aside.active { transform: translateX(0); }
+      main { padding-top: 4rem; }
+      .menu-btn { display: block; }
+    }
   </style>
 </head>
 <body>
-  <aside>
+  <!-- Botão hamburguer -->
+  <button class="menu-btn" id="menu-btn">☰</button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
     <h1>Pluto AR</h1>
     <nav>
       <a href="index.html">Home</a>
@@ -30,6 +75,8 @@
     </nav>
     <a href="../index.html" class="logout">Sair</a>
   </aside>
+
+  <!-- Conteúdo -->
   <main>
     <h1>Regras do Game</h1>
     <p>Antes de começar, leia atentamente as regras para garantir uma experiência divertida e justa para todos.</p>
@@ -40,5 +87,15 @@
       <li>Respeite o ambiente virtual e real ao jogar.</li>
     </ol>
   </main>
+
+  <!-- Script -->
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebar = document.getElementById('sidebar');
+
+    menuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+  </script>
 </body>
 </html>
